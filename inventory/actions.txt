@@ -1,0 +1,53 @@
+1. initiate new project in Pycharm
+2. install django
+3. create new project via django-admin
+4. indicate sources root for settings folder
+5. move to sources root folder
+6. startapp via ./manage.py startapp
+7. Install and connect Postgres:
+    a. sudo su - postgres
+    b. psql
+    c. CREATE DATABASE ERP;
+    d. CREATE USER erp_admin WITH PASSWORD '176154';
+    e. ALTER ROLE erp_admin SET client_encoding TO 'utf8';
+    f. ALTER ROLE erp_admin SET default_transaction_isolation TO 'read committed';
+    g. ALTER ROLE erp_admin SET timezone TO 'UTC';
+    h. GRANT ALL PRIVILEGES ON DATABASE ERP TO erp_admin;
+8. pip install pscycopg2
+9. in settings.py:
+                    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'ERP',
+        'USER': 'erp_admin',
+        'PASSWORD': '176154',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+    check ./manage.py, makemigrations, migrate, runserver
+    createsuperuser
+10.create a model in models.py and makemigrations
+11. install djangorestframework
+12. create serializers.py
+        class NewStockSerializer(ModelSerializer):
+            class Meta:
+                model = StockCreate
+                fields = '__all__'
+13. create view in views.py:
+                from rest_framework.viewsets import ModelViewSet
+                from inventory.stock_create.models import StockCreate
+                from inventory.stock_create.serializers import NewStockSerializer
+
+                class NewStockViewSet(ModelViewSet):
+                    queryset = StockCreate.objects.all()
+                    serializer_class = NewStockSerializer
+14. in sources root url.py:
+                from rest_framework.routers import SimpleRouter
+                from inventory.stock_create.views import NewStockViewSet
+
+                router = SimpleRouter()
+                router.register(r'create-stock', NewStockViewSet)
+                urlpatterns = [
+                    path('admin/', admin.site.urls),]
+
+                urlpatterns += router.urls   ---- "adding urls to router"
+
